@@ -1,0 +1,37 @@
+将以下文件及文件夹结构上传到 GitHub 仓库根目录。
+package.json 和 wrangler.jsonc 必须在根目录；ZIP 请先解压。
+
+.gitignore
+.node-version
+app/api/orders/lookup/route.ts
+app/api/orders/route.ts
+app/globals.css
+app/layout.tsx
+app/page.tsx
+app/session-guide/page.tsx
+components/storefront.tsx
+db/index.ts
+db/schema.ts
+DEPLOY-CLOUDFLARE.md
+drizzle.config.ts
+drizzle/0000_broken_gideon.sql
+drizzle/meta/_journal.json
+drizzle/meta/0000_snapshot.json
+lib/catalog.ts
+lib/orders.ts
+lib/session-info.ts
+next.config.ts
+package-lock.json
+package.json
+postcss.config.mjs
+public/favicon.svg
+README.md
+scripts/check-deploy-config.mjs
+tests/order-api.mjs
+tests/session-info.mjs
+tsconfig.json
+UPLOAD-FILES.txt
+vite.config.ts
+worker-configuration.d.ts
+worker/index.ts
+wrangler.jsonc
