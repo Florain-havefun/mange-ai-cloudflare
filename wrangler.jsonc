@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "mange-ai",
+  "name": "mange-ai-cloudflare"
   "main": "./worker/index.ts",
   "compatibility_date": "2026-05-15",
   "compatibility_flags": ["nodejs_compat"],
@@ -10,7 +10,7 @@
     {
       "binding": "DB",
       "database_name": "mange-ai-orders",
-      "database_id": "00000000-0000-4000-8000-000000000000",
+      "database_id": "131c96fb-223b-4060-9eff-8285785e76e4",
       "migrations_dir": "drizzle"
     }
   ]
