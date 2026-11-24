@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowUpRight, ArrowRight, Check, X, Menu, Search, ShieldCheck, FileCheck2, Copy, Download, LoaderCircle, CircleHelp, Sparkles, Zap, Layers3, Building2 } from "lucide-react";
+import { ArrowUpRight, ArrowRight, Check, X, Menu, Search, ShieldCheck, FileCheck2, Copy, Download, LoaderCircle, CircleHelp, Sparkles, Zap, Layers3 } from "lucide-react";
 import { plans, type Plan } from "@/lib/catalog";
 import { parseSessionInfo } from "@/lib/session-info";
 
@@ -14,7 +14,6 @@ const faqs = [
   ["Session 会上传或保存吗？", "Session 输入仅在你的浏览器中解析账号邮箱，解析完成后清空原文。订单提交邮箱、套餐和售后联系方式，不上传或保存 Session、accessToken、sessionToken 或 Cookie。也可以直接填写邮箱。"],
   ["现在可以直接付款吗？", "当前为预览版，可创建和查询测试订单，尚未接入在线支付，也不会产生实际扣款。所有订单初始状态均为待确认，创建订单不代表付款、订阅成功或已开始履约。"],
   ["多久开通？退款怎么处理？", "实际开通时间、适用条件、售后与退款规则需要在报价及付款前确认。本站当前不承诺固定到账时间，也未开放付款。确认完整服务条件后再决定是否购买。"],
-  ["团队、企业和教育方案如何下单？", "选择对应方案并提交邮箱与预计席位数量即可创建询价单。Business、Enterprise、Edu 的定价、采购资格与开通方式需要单独确认；登记需求不代表获得官方批准。"],
   ["怎样查看订单进度？", "提交成功后请保存订单号和查询密钥，再通过右上角「订单查询」查看。密钥只在创建时完整显示，系统不通过公开的邮箱搜索订单；请妥善保存查询凭证。"],
 ];
 
@@ -33,7 +32,6 @@ function OrderSummary({ order }: { order: Order }) {
 }
 
 export default function Storefront() {
-  const [filter, setFilter] = useState<"personal" | "team">("personal");
   const [mobileNav, setMobileNav] = useState(false);
   const [modal, setModal] = useState<Modal>(null);
   const [selected, setSelected] = useState(plans[1]);
@@ -151,31 +149,31 @@ export default function Storefront() {
     <main>
       <section className="hero container">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="tiny-grid" /><span>CHATGPT SUBSCRIPTIONS</span><span className="eyebrow-pill">全档位已上架</span></div>
+          <div className="eyebrow"><span className="tiny-grid" /><span>CHATGPT SUBSCRIPTIONS</span><span className="eyebrow-pill">Go · Plus · Pro 100</span></div>
           <h1>给灵感，<br /><span className="serif">充满格<span className="hero-period">。</span></span></h1>
           <p className="hero-intro">从日常对话，到下一次突破。<br />找到适合你的 ChatGPT 订阅，让好想法继续发生。</p>
           <div className="hero-actions"><a className="button primary" href="#plans">选择我的套餐<ArrowUpRight size={19} /></a><a className="text-link" href="#how-it-works">了解充值流程<ArrowRight size={17} /></a></div>
           <div className="hero-assurance"><span><ShieldCheck size={16} />无需提交密码</span><span><FileCheck2 size={16} />订单进度可查</span></div>
         </div>
-        <div className="hero-art" role="img" aria-label="满格 AI 的 ChatGPT Plus 订阅展示卡，人民币 179 元每月">
+        <div className="hero-art" role="img" aria-label={`满格 AI 的 ChatGPT Plus 订阅展示卡，人民币 ${plans[1].price} 元每月`}>
           <div className="orbit-label">A LITTLE BOOST. A BIGGER POSSIBILITY.</div>
           <div className="subscription-pass">
             <div className="pass-top"><span><Mark small />MANGE AI</span><span className="pass-chip">PERSONAL PLAN</span></div>
             <div className="pass-symbol" aria-hidden="true"><div className="orbit-ring ring-one" /><div className="orbit-ring ring-two" /><div className="orbit-ring ring-three" /><div className="power-bars"><i /><i /><i /></div><Sparkles className="pass-spark" /></div>
-            <div className="pass-bottom"><div><span className="pass-caption">给每一天，多一点可能</span><strong>ChatGPT Plus</strong></div><span className="pass-price"><small>¥</small>179<em>/ 月</em></span></div>
-            <div className="pass-rule"><span>THINK. CREATE. GO FURTHER.</span><span>02 / 05</span></div>
+            <div className="pass-bottom"><div><span className="pass-caption">给每一天，多一点可能</span><strong>ChatGPT Plus</strong></div><span className="pass-price"><small>¥</small>{money(plans[1].price!)}<em>/ 月</em></span></div>
+            <div className="pass-rule"><span>THINK. CREATE. GO FURTHER.</span><span>02 / 03</span></div>
           </div>
           <div className="floating-note"><span className="note-icon"><Zap size={20} fill="currentColor" /></span><div><strong>你的灵感，值得满格</strong><span>写作 / 研究 / 编程 / 更多可能</span></div><ArrowUpRight size={22} /></div>
           <span className="art-coordinate">MANGE AI — IDEAS IN MOTION</span>
         </div>
       </section>
 
-      <div className="usecase-strip"><div className="container usecase-inner"><span className="strip-title">为你的下一件事，<strong>充一点能量。</strong></span><button onClick={() => openPlan(plans[1])}><Sparkles size={18} />写作与创意<ArrowUpRight size={15} /></button><button onClick={() => openPlan(plans[2])}><Layers3 size={18} />研究与编程<ArrowUpRight size={15} /></button><button onClick={() => { setFilter("team"); document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" }); }}><Building2 size={18} />团队与协作<ArrowUpRight size={15} /></button></div></div>
+      <div className="usecase-strip"><div className="container usecase-inner"><span className="strip-title">为你的下一件事，<strong>充一点能量。</strong></span><button onClick={() => openPlan(plans[1])}><Sparkles size={18} />写作与创意<ArrowUpRight size={15} /></button><button onClick={() => openPlan(plans[2])}><Layers3 size={18} />研究与编程<ArrowUpRight size={15} /></button><button onClick={() => openPlan(plans[0])}><Zap size={18} />日常与学习<ArrowUpRight size={15} /></button></div></div>
 
       <section className="section container pricing-section" id="plans">
-        <div className="section-heading"><div><span className="section-index">01 / FIND YOUR PLAN</span><h2>刚刚好，才是好套餐。</h2><p>从轻量使用到专业工作，为每一种节奏准备。</p></div><div className="segmented" role="group" aria-label="套餐类型"><button aria-pressed={filter === "personal"} className={filter === "personal" ? "active" : ""} onClick={() => setFilter("personal")}>个人订阅</button><button aria-pressed={filter === "team"} className={filter === "team" ? "active" : ""} onClick={() => setFilter("team")}>团队 / 机构</button></div></div>
-        <div className={`plan-grid ${filter === "team" ? "team-grid" : ""}`}>
-          {plans.filter(plan => plan.audience === filter).map(plan => <article className={`plan-card ${plan.featured ? "featured" : ""}`} key={plan.id}>
+        <div className="section-heading"><div><span className="section-index">01 / FIND YOUR PLAN</span><h2>刚刚好，才是好套餐。</h2><p>从轻量使用到专业工作，为每一种节奏准备。</p></div></div>
+        <div className="plan-grid">
+          {plans.map(plan => <article className={`plan-card ${plan.featured ? "featured" : ""}`} key={plan.id}>
             <div className="plan-card-top"><span className="plan-number">/ {plan.level}</span>{plan.featured && <span className="recommended"><Sparkles size={11} />优选套餐</span>}</div>
             <h3>{plan.name}</h3><p className="plan-subtitle">{plan.subtitle}</p>
             <div className={`plan-price ${plan.price === null ? "quote-price" : ""}`}>{plan.price === null ? <strong>按需报价</strong> : <><span>¥</span><strong>{money(plan.price)}</strong><small>/ 月</small></>}</div>
@@ -184,13 +182,13 @@ export default function Storefront() {
             <ul className="plan-features">{plan.features.map(feature => <li key={feature}><Check size={14} />{feature}</li>)}</ul>
           </article>)}
         </div>
-        <p className="pricing-footnote"><span><i />人民币服务售价 · {filter === "personal" ? "个人套餐按月，单次确认，无站内自动续费" : "团队与机构方案需单独报价并确认资格"}</span><a href="https://chatgpt.com/pricing/" target="_blank" rel="noreferrer">核对官方套餐权益<ArrowUpRight size={13} /></a></p>
-        <div className="plan-helper"><span className="helper-symbol"><CircleHelp size={23} /></span><div><strong>还没决定？从你的使用方式开始。</strong><p>轻量体验选 Go，日常工作了解 Plus，专业需求咨询 Pro。团队方案按实际人数规划。</p></div><button className="text-link" onClick={() => openModal("support")}>看看服务说明<ArrowRight size={17} /></button></div>
+        <p className="pricing-footnote"><span><i />人民币服务售价 · 个人套餐按月，单次确认，无站内自动续费</span><a href="https://chatgpt.com/pricing/" target="_blank" rel="noreferrer">核对官方套餐权益<ArrowUpRight size={13} /></a></p>
+        <div className="plan-helper"><span className="helper-symbol"><CircleHelp size={23} /></span><div><strong>还没决定？从你的使用方式开始。</strong><p>轻量体验选 Go，日常工作选 Plus，高强度研究与编程选 Pro 100。</p></div><button className="text-link" onClick={() => openModal("support")}>看看服务说明<ArrowRight size={17} /></button></div>
       </section>
 
       <section className="guide-section" id="how-it-works"><div className="container guide-grid">
         <div className="guide-intro"><span className="section-index">02 / HOW IT WORKS</span><h2>几步确认，<br /><span className="serif">然后，专注创造。</span></h2><p>每一步都说清楚，让你知道<br />选了什么、进展到哪。</p><a className="text-link" href="#plans">开始选择套餐<ArrowUpRight size={17} /></a><div className="guide-stamp"><Mark small /><span>LESS FRICTION.<br />MORE INSPIRATION.</span></div></div>
-        <div className="steps"><article><span className="step-number">01</span><div><h3>选一个，适合自己的</h3><p>比较个人与团队方案。明确套餐、价格、周期及适用条件，再登记你的需求。</p><span className="step-tag">先确认方案</span></div></article><article><span className="step-number">02</span><div><h3>核对账号邮箱，确认服务</h3><p>填写账号邮箱，也可通过 Session 在本地读取邮箱。提交后保存订单凭证，实际履约条件需另行确认。</p><a className="step-tag tag-button" href="/session-guide" target="_blank" rel="noreferrer">如何获取 Session<ArrowUpRight size={12} /></a></div></article><article><span className="step-number">03</span><div><h3>查进度，让每一步有迹可循</h3><p>通过订单号和查询密钥查看状态。当前预览版仅登记订单，暂不收款或执行充值。</p><button className="step-tag tag-button" onClick={() => openModal("lookup")}>打开订单查询<ArrowUpRight size={12} /></button></div></article></div>
+        <div className="steps"><article><span className="step-number">01</span><div><h3>选一个，适合自己的</h3><p>比较 Go、Plus 与 Pro 100。明确套餐、价格、周期及适用条件，再登记你的需求。</p><span className="step-tag">先确认方案</span></div></article><article><span className="step-number">02</span><div><h3>核对账号邮箱，确认服务</h3><p>填写账号邮箱，也可通过 Session 在本地读取邮箱。提交后保存订单凭证，实际履约条件需另行确认。</p><a className="step-tag tag-button" href="/session-guide" target="_blank" rel="noreferrer">如何获取 Session<ArrowUpRight size={12} /></a></div></article><article><span className="step-number">03</span><div><h3>查进度，让每一步有迹可循</h3><p>通过订单号和查询密钥查看状态。当前预览版仅登记订单，暂不收款或执行充值。</p><button className="step-tag tag-button" onClick={() => openModal("lookup")}>打开订单查询<ArrowUpRight size={12} /></button></div></article></div>
       </div></section>
 
       <section className="section container faq-section" id="faq"><div className="faq-intro"><span className="section-index">03 / GOOD TO KNOW</span><h2>你关心的，<br />在这里说清。</h2><p>关于套餐、账号和订单的几个问题。</p><button className="support-link" onClick={() => openModal("support")}><span><CircleHelp size={19} /></span>服务咨询<ArrowUpRight size={16} /></button></div><div className="faq-list">{faqs.map(([question, answer], index) => <details key={question}><summary><span className="faq-number">0{index + 1}</span><span>{question}</span><span className="faq-plus">+</span></summary><p>{answer}</p></details>)}</div></section>
@@ -219,7 +217,7 @@ export default function Storefront() {
           {order && error && <p className="error-message" role="alert">{error}</p>}
         </>}
         {modal === "lookup" && <><div className="dialog-eyebrow">MANGE AI / ORDER TRACKING</div><h2 id="dialog-title">每一步，都查得到。</h2><p className="dialog-lead">使用下单时保存的订单号和查询密钥查看进度。</p><form className="order-form" onSubmit={queryOrder}><label>订单号<input value={lookupId} onChange={event => setLookupId(event.target.value)} placeholder="MG 开头的完整订单号" autoComplete="off" required maxLength={30} /></label><label>查询密钥<input value={lookupKey} onChange={event => setLookupKey(event.target.value)} type="password" placeholder="48 位查询密钥" autoComplete="off" required minLength={48} maxLength={48} /></label>{error && <p className="error-message" role="alert">{error}</p>}<button className="button primary full-width" disabled={busy}>{busy ? <LoaderCircle className="spin" size={17} /> : <Search size={17} />}{busy ? "正在查询" : "查询订单"}</button></form>{lookupResult && <div className="lookup-result" aria-live="polite"><OrderSummary order={lookupResult} /></div>}<p className="privacy-hint"><ShieldCheck size={14} />查询结果隐藏部分邮箱，不公开展示联系资料。</p></>}
-        {modal === "support" && <><div className="dialog-eyebrow">MANGE AI / HERE TO HELP</div><h2 id="dialog-title">把需求，说清楚。</h2><p className="dialog-lead">先选方案，再确认服务，最后决定是否付款。</p><div className="prose"><p>目前网站正在预览，客服联系方式与收款通道尚未配置。你可以体验套餐选择、登记需求和订单查询。</p><p>个人套餐可选择 Go、Plus、Pro 100、Pro 200 或 Pro 500；团队和机构方案请填写席位数量与需求。所有询价单均需进一步确认资格、报价和履约条件。</p><p>当前不会自动向客服发送消息，也不会执行充值或扣款。</p></div><button className="button primary full-width" onClick={() => { closeModal(); document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" }); }}>回到套餐选择<ArrowRight size={17} /></button></>}
+        {modal === "support" && <><div className="dialog-eyebrow">MANGE AI / HERE TO HELP</div><h2 id="dialog-title">把需求，说清楚。</h2><p className="dialog-lead">先选方案，再确认服务，最后决定是否付款。</p><div className="prose"><p>目前网站正在预览，客服联系方式与收款通道尚未配置。你可以体验套餐选择、登记需求和订单查询。</p><p>目前提供 Go、Plus 和 Pro 100 三种个人月度套餐。选择方案并填写账号邮箱及售后联系方式，保存订单查询凭证。</p><p>当前不会自动向客服发送消息，也不会执行充值或扣款。</p></div><button className="button primary full-width" onClick={() => { closeModal(); document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" }); }}>回到套餐选择<ArrowRight size={17} /></button></>}
         {modal === "privacy" && <><div className="dialog-eyebrow">MANGE AI / PRIVACY</div><h2 id="dialog-title">隐私说明</h2><div className="prose"><h3>我们保存哪些资料</h3><p>新订单登记所选套餐、数量、邮箱、微信号或手机号、创建时间与状态。联系方式仅用于本次订单处理与售后联系，不收集需求备注。查询密钥以摘要形式保存，不保存原文。</p><h3>Session 仅在本地解析</h3><p>Session 输入框仅在浏览器内读取账号邮箱，不发起登录请求。无论解析成功或失败，均清空输入原文。Session、accessToken、sessionToken 和 Cookie 不会随订单发送，不写入数据库或浏览器本地存储。</p><h3>如何查询与处理资料</h3><p>查询需要同时提供订单号与密钥，结果隐藏部分邮箱，不展示微信号或手机号。查询凭证不会自动保存到浏览器本地存储。</p><h3>预览期间</h3><p>预览订单同样会存入数据库，建议使用测试资料。正式运营前需要补充经营主体、客服及数据保留与删除渠道。请勿填写密码、支付卡信息或验证码。</p></div></>}
         {modal === "terms" && <><div className="dialog-eyebrow">MANGE AI / SERVICE NOTES</div><h2 id="dialog-title">服务说明</h2><div className="prose"><h3>当前服务状态</h3><p>本站当前为预览版，提供套餐展示、测试订单登记和查询；尚未开放在线收款，也未接入实际订阅开通服务。创建订单不代表付款、开通或履约承诺。</p><h3>套餐与价格</h3><p>页面显示人民币服务售价，个人套餐按一个月展示，不代表 OpenAI 官方美元定价。询价方案需根据席位、周期、资格与适用条件单独报价。付款前需确认总价、服务方式、开通时效及售后规则。</p><h3>第三方关系</h3><p>满格 AI 为独立订阅协助服务，与 OpenAI 无隶属或官方授权关系。套餐功能、用量和可用地区由 OpenAI 调整，以其当时公布的说明为准。</p><h3>履约与售后</h3><p>正式运营前需补充经营主体、客服渠道、退款政策和支付服务。现阶段不对到账时间、账号可用性或官方审批结果作保证。</p></div></>}
       </div>}

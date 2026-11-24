@@ -25,7 +25,7 @@ check("client cannot override price", () => assert.equal(result.status, 400));
 result = await post(createPath, { ...valid(), quantity: 2 });
 check("personal plan quantity validated", () => assert.equal(result.status, 400));
 result = await post(createPath, { ...valid(), planId: "business-standard", quantity: 1 });
-check("team seats validated", () => assert.equal(result.status, 400));
+check("hidden team tier rejected", () => assert.equal(result.status, 400));
 result = await post(createPath, { ...valid(), email: "not-an-email" });
 check("account email validated", () => assert.equal(result.status, 400));
 result = await post(createPath, { ...valid(), contact: "" });
@@ -42,7 +42,7 @@ const payload = valid();
 const first = await post(createPath, payload);
 check("order created with server price and pending state", () => {
   assert.equal(first.status, 201, JSON.stringify(first.body));
-  assert.equal(first.body.order.total, 179);
+  assert.equal(first.body.order.total, 130);
   assert.equal(first.body.order.status, "pending_confirmation");
   assert.equal(first.body.order.paymentEnabled, false);
   assert.equal(first.body.order.preview, true);
@@ -71,13 +71,19 @@ result = await post(queryPath, { id: first.body.order.id, lookupKey: randomBytes
 check("wrong lookup key reveals no order", () => { assert.equal(result.status, 404); assert.equal(result.body.order, undefined); });
 result = await post(queryPath, { id: first.body.order.id, lookupKey: payload.lookupKey });
 check("persisted order found with exact credentials", () => {
-  assert.equal(result.status, 200); assert.equal(result.body.order.id, first.body.order.id); assert.equal(result.body.order.total, 179);
+  assert.equal(result.status, 200); assert.equal(result.body.order.id, first.body.order.id); assert.equal(result.body.order.total, 130);
   for (const field of ["contact", "contactType", "contactValue"]) assert.equal(result.body.order[field], undefined);
 });
-result = await post(createPath, { ...valid(), planId: "pro500" });
-check("unpriced personal tier remains quote", () => { assert.equal(result.status, 201); assert.equal(result.body.order.total, null); });
-result = await post(createPath, { ...valid(), planId: "business-premium", quantity: 3 });
-check("team inquiry accepts seats without invented price", () => { assert.equal(result.status, 201); assert.equal(result.body.order.quantity, 3); assert.equal(result.body.order.total, null); });
+for (const planId of ["pro200", "pro500", "business-standard", "business-premium", "enterprise", "edu"]) {
+  result = await post(createPath, { ...valid(), planId });
+  check(`hidden tier ${planId} rejected`, () => assert.equal(result.status, 400));
+}
+for (const [planId, price] of [["go", 50], ["pro100", 680]]) {
+  result = await post(createPath, { ...valid(), planId });
+  check(`${planId} uses updated server price`, () => {
+    assert.equal(result.status, 201); assert.equal(result.body.order.total, price); assert.equal(result.body.order.unitPrice, price);
+  });
+}
 result = await post(createPath, valid(), { Origin: "https://unrelated.example" });
 check("cross-site request rejected", () => assert.equal(result.status, 403));
 result = await post(createPath, { ...valid(), note: "a".repeat(9000) });
