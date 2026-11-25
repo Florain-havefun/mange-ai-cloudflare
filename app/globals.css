@@ -15,6 +15,13 @@
 @media(max-width:680px){.plan-description{font-size:11px;min-height:81px}.plan-features li{font-size:10px;line-height:1.7}.plan-subtitle{font-size:10px;min-height:36px}.pricing-footnote,.plan-helper p,.steps p,.faq-list details>p{font-size:11px}.plan-helper strong,.plan-helper .text-link{font-size:11px}.faq-list summary{font-size:12px}.steps h3{font-size:16px}.footer-links,.footer-top p,.footer-bottom,.footer-bottom button,.footer-bottom a{font-size:10px}.order-form label,.dialog-lead,.order-form .checkbox-label,.form-notice p,.inline-policy,.privacy-hint,.note{font-size:11px}.hero-intro{font-size:13px}.hero-assurance{font-size:11px}}
 .plan-card.featured .plan-number,.plan-card.featured .plan-price small{color:#b6c7a8}.step-tag{color:#536346}
 /* Account verification and its dedicated guide. */
+.recharge-instructions{margin:18px 0 24px;padding:16px 18px;border:1px solid #dce5d0;border-radius:8px;background:#eef3e5}
+.recharge-instructions ol{list-style:decimal;margin:0;padding-left:20px;display:grid;gap:12px;font-size:12px;line-height:1.9}
+.recharge-instructions li{padding-left:3px}
+.recharge-instructions li::marker{font-weight:700;color:var(--ink)}
+.recharge-instructions a{display:inline-flex;align-items:center;gap:3px;text-decoration:underline;text-underline-offset:3px}
+.recharge-instructions a.recharge-session-url{display:flex;width:fit-content;max-width:100%;margin-top:6px;font-family:Consolas,monospace;font-size:11px;overflow-wrap:anywhere;word-break:break-word}
+.recharge-session-url svg{flex-shrink:0}
 .aftercare-contact{display:flex;flex-direction:column;gap:7px}
 .aftercare-contact>p{margin:0;font-size:11px;line-height:1.7;color:#5e6d52}
 .session-section{display:flex;flex-direction:column;gap:9px}
