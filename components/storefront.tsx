@@ -11,7 +11,7 @@ const money = (value: number) => value.toLocaleString("zh-CN");
 const faqs = [
   ["这是 OpenAI 官方网站吗？", "满格 AI 是独立的订阅协助服务，与 OpenAI 无隶属关系。套餐名称用于说明服务对象。你也可以通过 ChatGPT 官方网站自行订阅。"],
   ["我该选 Go、Plus，还是 Pro？", "日常对话和轻度使用可以先了解 Go；经常写作、学习或研究可以考虑 Plus；更高强度的专业工作可以咨询 Pro。各档位功能、额度和可用地区会调整，请以 OpenAI 当时公布的内容为准。"],
-  ["Session 会上传或保存吗？", "Session 输入仅在你的浏览器中解析账号邮箱，解析完成后清空原文。订单提交邮箱、套餐和售后联系方式，不上传或保存 Session、accessToken、sessionToken 或 Cookie。也可以直接填写邮箱。"],
+  ["Session 会上传或保存吗？", "Session 输入仅在你的浏览器中解析账号邮箱，解析完成后清空原文。订单提交邮箱、套餐和售后联系方式，不上传或保存 Session、accessToken、sessionToken 或 Cookie。订单邮箱从 Session 中读取，无需手动填写。"],
   ["现在可以直接付款吗？", "当前为预览版，可创建和查询测试订单，尚未接入在线支付，也不会产生实际扣款。所有订单初始状态均为待确认，创建订单不代表付款、订阅成功或已开始履约。"],
   ["多久开通？退款怎么处理？", "实际开通时间、适用条件、售后与退款规则需要在报价及付款前确认。本站当前不承诺固定到账时间，也未开放付款。确认完整服务条件后再决定是否购买。"],
   ["怎样查看订单进度？", "提交成功后请保存订单号和查询密钥，再通过右上角「订单查询」查看。密钥只在创建时完整显示，系统不通过公开的邮箱搜索订单；请妥善保存查询凭证。"],
@@ -79,13 +79,17 @@ export default function Storefront() {
   }
   function parseEnteredSession(): string | null {
     const input = sessionInput.current;
-    if (!input?.value.trim()) return email;
+    if (!input?.value.trim()) {
+      if (email) return email;
+      setSessionError("请先填写有效的 Session，以读取账号邮箱。");
+      return null;
+    }
     try {
       const parsed = parseSessionInfo(input.value);
       setEmail(parsed.email); setSessionEmail(parsed.email); setSessionError("");
       return parsed.email;
     } catch (err) {
-      setSessionEmail("");
+      setEmail(""); setSessionEmail("");
       setSessionError(err instanceof Error ? err.message : "Session 无法解析，请重新获取。");
       return null;
     } finally {
@@ -188,7 +192,7 @@ export default function Storefront() {
 
       <section className="guide-section" id="how-it-works"><div className="container guide-grid">
         <div className="guide-intro"><span className="section-index">02 / HOW IT WORKS</span><h2>几步确认，<br /><span className="serif">然后，专注创造。</span></h2><p>每一步都说清楚，让你知道<br />选了什么、进展到哪。</p><a className="text-link" href="#plans">开始选择套餐<ArrowUpRight size={17} /></a><div className="guide-stamp"><Mark small /><span>LESS FRICTION.<br />MORE INSPIRATION.</span></div></div>
-        <div className="steps"><article><span className="step-number">01</span><div><h3>选一个，适合自己的</h3><p>比较 Go、Plus 与 Pro 100。明确套餐、价格、周期及适用条件，再登记你的需求。</p><span className="step-tag">先确认方案</span></div></article><article><span className="step-number">02</span><div><h3>核对账号邮箱，确认服务</h3><p>填写账号邮箱，也可通过 Session 在本地读取邮箱。提交后保存订单凭证，实际履约条件需另行确认。</p><a className="step-tag tag-button" href="/session-guide" target="_blank" rel="noreferrer">如何获取 Session<ArrowUpRight size={12} /></a></div></article><article><span className="step-number">03</span><div><h3>查进度，让每一步有迹可循</h3><p>通过订单号和查询密钥查看状态。当前预览版仅登记订单，暂不收款或执行充值。</p><button className="step-tag tag-button" onClick={() => openModal("lookup")}>打开订单查询<ArrowUpRight size={12} /></button></div></article></div>
+        <div className="steps"><article><span className="step-number">01</span><div><h3>选一个，适合自己的</h3><p>比较 Go、Plus 与 Pro 100。明确套餐、价格、周期及适用条件，再登记你的需求。</p><span className="step-tag">先确认方案</span></div></article><article><span className="step-number">02</span><div><h3>核对账号邮箱，确认服务</h3><p>通过 Session 在本地读取账号邮箱，填写售后联系方式。提交后保存订单凭证，实际履约条件需另行确认。</p><a className="step-tag tag-button" href="/session-guide" target="_blank" rel="noreferrer">如何获取 Session<ArrowUpRight size={12} /></a></div></article><article><span className="step-number">03</span><div><h3>查进度，让每一步有迹可循</h3><p>通过订单号和查询密钥查看状态。当前预览版仅登记订单，暂不收款或执行充值。</p><button className="step-tag tag-button" onClick={() => openModal("lookup")}>打开订单查询<ArrowUpRight size={12} /></button></div></article></div>
       </div></section>
 
       <section className="section container faq-section" id="faq"><div className="faq-intro"><span className="section-index">03 / GOOD TO KNOW</span><h2>你关心的，<br />在这里说清。</h2><p>关于套餐、账号和订单的几个问题。</p><button className="support-link" onClick={() => openModal("support")}><span><CircleHelp size={19} /></span>服务咨询<ArrowUpRight size={16} /></button></div><div className="faq-list">{faqs.map(([question, answer], index) => <details key={question}><summary><span className="faq-number">0{index + 1}</span><span>{question}</span><span className="faq-plus">+</span></summary><p>{answer}</p></details>)}</div></section>
@@ -205,15 +209,14 @@ export default function Storefront() {
           <h2 id="dialog-title">{order ? "订单已登记，请保存凭证。" : selected.price === null ? "聊聊你的订阅需求。" : "给你的账号，充一点能量。"}</h2>
           {order ? <><p className="dialog-lead">这是待确认的预览订单，尚未付款或开通。</p><OrderSummary order={order} /><div className="credential-box"><label>查询密钥 · 只在本次创建时完整显示</label><code>{credential.lookupKey}</code><p>请保存订单号与密钥，关闭页面后不能恢复密钥。</p></div><div className="receipt-actions"><button className="button primary" onClick={copyReceipt}>{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "凭证已复制" : "复制查询凭证"}</button><button className="button outline" onClick={downloadReceipt}><Download size={16} />下载凭证</button></div><button className="text-link full-center" onClick={() => openModal("lookup")}>查看订单进度<ArrowRight size={16} /></button></> : <>
             <p className="dialog-lead">按照以下步骤填写账号信息和售后联系方式，提交后获得订单查询凭证。</p><div className="selected-plan"><div><strong>{selected.name}</strong><span>{selected.audience === "team" ? "团队 / 机构方案" : "个人订阅 · 1 个月"}</span></div><b>{selected.price === null ? "待报价" : <>¥{money(selected.price)}<small>/ 月</small></>}</b></div>
-            <section className="recharge-instructions" aria-label="充值步骤"><ol>
+            <section className="recharge-instructions" aria-labelledby="recharge-guide-title"><h3 id="recharge-guide-title">操作指南</h3><ol>
               <li>在官网 <a href="https://chatgpt.com/" target="_blank" rel="noreferrer">www.chatgpt.com<ArrowUpRight size={12} /></a> 登录</li>
               <li>在浏览器打开下面网站，复制全部代码，粘贴到下方（不要在微信内打开）<a className="recharge-session-url" href="https://chatgpt.com/api/auth/session" target="_blank" rel="noreferrer">https://chatgpt.com/api/auth/session<ArrowUpRight size={12} /></a></li>
               <li>等待充值完成</li>
             </ol></section>
             <form onSubmit={submitOrder} className="order-form">
-              <div className="session-section"><div className="session-label-row"><label htmlFor="session-input">填写 Session</label><a href="/session-guide" target="_blank" rel="noreferrer">如何获取 Session<ArrowUpRight size={13} /></a></div><textarea id="session-input" ref={sessionInput} rows={4} maxLength={131072} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} placeholder="粘贴 Session 完整 JSON，在本地读取账号邮箱。原文不会上传或保存。" aria-describedby="session-help" onChange={() => { setSessionError(""); setSessionEmail(""); }} /><div className="session-tools"><span id="session-help">解析后自动清空原文</span><button type="button" onClick={parseEnteredSession}>本地解析 Session<ArrowRight size={13} /></button></div>{sessionEmail && <p className="session-success" role="status"><Check size={14} />已读取账号：{sessionEmail}。Session 原文已清空。</p>}{sessionError && <p className="error-message" role="alert">{sessionError}</p>}</div>
+              <div className="session-section"><div className="session-label-row"><label htmlFor="session-input">填写 Session</label><a href="/session-guide" target="_blank" rel="noreferrer">如何获取 Session<ArrowUpRight size={13} /></a></div><textarea id="session-input" ref={sessionInput} required={!email} rows={4} maxLength={131072} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} placeholder="粘贴 Session 完整 JSON，在本地读取账号邮箱。原文不会上传或保存。" aria-describedby="session-help" onChange={() => { setEmail(""); setSessionError(""); setSessionEmail(""); }} /><div className="session-tools"><span id="session-help">解析后自动清空原文</span><button type="button" onClick={parseEnteredSession}>本地解析 Session<ArrowRight size={13} /></button></div>{sessionEmail && <p className="session-success" role="status"><Check size={14} />已读取账号：{sessionEmail}。Session 原文已清空。</p>}{sessionError && <p className="error-message" role="alert">{sessionError}</p>}</div>
               <div className="aftercare-contact"><div className="contact-row"><label>售后联系渠道<select value={contactType} onChange={event => setContactType(event.target.value as "wechat" | "phone")}><option value="wechat">微信</option><option value="phone">手机号</option></select></label><label>{contactType === "wechat" ? "微信号" : "手机号"}<input key={contactType} name="contact" type={contactType === "phone" ? "tel" : "text"} autoComplete={contactType === "phone" ? "tel" : "off"} placeholder={contactType === "wechat" ? "请输入微信号" : "请输入手机号，可含国家区号"} minLength={contactType === "phone" ? 7 : 3} maxLength={contactType === "phone" ? 25 : 64} aria-describedby="aftercare-help" required /></label></div><p id="aftercare-help">微信号或手机号任选其一，用于本次订单的售后联系。</p></div>
-              <label>{selected.audience === "team" ? "负责人邮箱" : "ChatGPT 账号邮箱"}<input name="email" type="email" autoComplete="email" placeholder="name@example.com" required maxLength={254} value={email} onChange={event => { setEmail(event.target.value); setSessionEmail(""); }} /></label>
               {selected.audience === "team" && <label>预计席位数<input name="quantity" type="number" defaultValue={2} min={2} max={1000} required /></label>}
               <div className="form-notice"><CircleHelp size={17} /><p>当前为预览版，未接入收款与充值。Session 只用于本地读取邮箱，订单不上传或保存登录令牌。请勿填写密码或验证码。</p></div>
               <label className="checkbox-label"><input type="checkbox" name="consent" required /><span>我已阅读服务与隐私说明，同意保存邮箱、套餐和所填微信号或手机号，用于本次订单处理与售后联系，并知晓此预览订单不会产生扣款。</span></label>
@@ -223,7 +226,7 @@ export default function Storefront() {
           {order && error && <p className="error-message" role="alert">{error}</p>}
         </>}
         {modal === "lookup" && <><div className="dialog-eyebrow">MANGE AI / ORDER TRACKING</div><h2 id="dialog-title">每一步，都查得到。</h2><p className="dialog-lead">使用下单时保存的订单号和查询密钥查看进度。</p><form className="order-form" onSubmit={queryOrder}><label>订单号<input value={lookupId} onChange={event => setLookupId(event.target.value)} placeholder="MG 开头的完整订单号" autoComplete="off" required maxLength={30} /></label><label>查询密钥<input value={lookupKey} onChange={event => setLookupKey(event.target.value)} type="password" placeholder="48 位查询密钥" autoComplete="off" required minLength={48} maxLength={48} /></label>{error && <p className="error-message" role="alert">{error}</p>}<button className="button primary full-width" disabled={busy}>{busy ? <LoaderCircle className="spin" size={17} /> : <Search size={17} />}{busy ? "正在查询" : "查询订单"}</button></form>{lookupResult && <div className="lookup-result" aria-live="polite"><OrderSummary order={lookupResult} /></div>}<p className="privacy-hint"><ShieldCheck size={14} />查询结果隐藏部分邮箱，不公开展示联系资料。</p></>}
-        {modal === "support" && <><div className="dialog-eyebrow">MANGE AI / HERE TO HELP</div><h2 id="dialog-title">把需求，说清楚。</h2><p className="dialog-lead">先选方案，再确认服务，最后决定是否付款。</p><div className="prose"><p>目前网站正在预览，客服联系方式与收款通道尚未配置。你可以体验套餐选择、登记需求和订单查询。</p><p>目前提供 Go、Plus 和 Pro 100 三种个人月度套餐。选择方案并填写账号邮箱及售后联系方式，保存订单查询凭证。</p><p>当前不会自动向客服发送消息，也不会执行充值或扣款。</p></div><button className="button primary full-width" onClick={() => { closeModal(); document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" }); }}>回到套餐选择<ArrowRight size={17} /></button></>}
+        {modal === "support" && <><div className="dialog-eyebrow">MANGE AI / HERE TO HELP</div><h2 id="dialog-title">把需求，说清楚。</h2><p className="dialog-lead">先选方案，再确认服务，最后决定是否付款。</p><div className="prose"><p>目前网站正在预览，客服联系方式与收款通道尚未配置。你可以体验套餐选择、登记需求和订单查询。</p><p>目前提供 Go、Plus 和 Pro 100 三种个人月度套餐。选择方案并填写 Session 及售后联系方式，保存订单查询凭证。</p><p>当前不会自动向客服发送消息，也不会执行充值或扣款。</p></div><button className="button primary full-width" onClick={() => { closeModal(); document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" }); }}>回到套餐选择<ArrowRight size={17} /></button></>}
         {modal === "privacy" && <><div className="dialog-eyebrow">MANGE AI / PRIVACY</div><h2 id="dialog-title">隐私说明</h2><div className="prose"><h3>我们保存哪些资料</h3><p>新订单登记所选套餐、数量、邮箱、微信号或手机号、创建时间与状态。联系方式仅用于本次订单处理与售后联系，不收集需求备注。查询密钥以摘要形式保存，不保存原文。</p><h3>Session 仅在本地解析</h3><p>Session 输入框仅在浏览器内读取账号邮箱，不发起登录请求。无论解析成功或失败，均清空输入原文。Session、accessToken、sessionToken 和 Cookie 不会随订单发送，不写入数据库或浏览器本地存储。</p><h3>如何查询与处理资料</h3><p>查询需要同时提供订单号与密钥，结果隐藏部分邮箱，不展示微信号或手机号。查询凭证不会自动保存到浏览器本地存储。</p><h3>预览期间</h3><p>预览订单同样会存入数据库，建议使用测试资料。正式运营前需要补充经营主体、客服及数据保留与删除渠道。请勿填写密码、支付卡信息或验证码。</p></div></>}
         {modal === "terms" && <><div className="dialog-eyebrow">MANGE AI / SERVICE NOTES</div><h2 id="dialog-title">服务说明</h2><div className="prose"><h3>当前服务状态</h3><p>本站当前为预览版，提供套餐展示、测试订单登记和查询；尚未开放在线收款，也未接入实际订阅开通服务。创建订单不代表付款、开通或履约承诺。</p><h3>套餐与价格</h3><p>页面显示人民币服务售价，个人套餐按一个月展示，不代表 OpenAI 官方美元定价。询价方案需根据席位、周期、资格与适用条件单独报价。付款前需确认总价、服务方式、开通时效及售后规则。</p><h3>第三方关系</h3><p>满格 AI 为独立订阅协助服务，与 OpenAI 无隶属或官方授权关系。套餐功能、用量和可用地区由 OpenAI 调整，以其当时公布的说明为准。</p><h3>履约与售后</h3><p>正式运营前需补充经营主体、客服渠道、退款政策和支付服务。现阶段不对到账时间、账号可用性或官方审批结果作保证。</p></div></>}
       </div>}
